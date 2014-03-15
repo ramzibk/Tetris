@@ -21,6 +21,15 @@ public class BoardView extends JComponent implements ChangeListener{
     Board board;
     private static final int BLOCK_WIDTH=19;
     private static final int BLOCK_HEIGHT=19;
+    private static Color[] colors= {new Color(255,0,0), // red
+                                    new Color(255,255,0), //green
+                                    new Color(0,0,255), //blue
+                                    new Color(0,200,255), //light blue
+                                    new Color(128,0,128), //purple
+                                    new Color(255,255,0), //yellow
+                                    new Color(255,0,255), //magenta
+                                    new Color(255,128,0), //orange
+                                    };
     
     public BoardView(Board board) {
         this.board = board;
@@ -58,16 +67,17 @@ public class BoardView extends JComponent implements ChangeListener{
                 x2=x1;y2=BLOCK_HEIGHT*grid.length;
                 g.drawLine(x1,y1,x2,y2);
             }
-            // Print color
-            g.setColor(Color.BLACK);
+            // Fill Mino color
             for(int j=0;j<grid.length;j++){
                 for(int i=0;i<grid[0].length;i++){
-                    int x=(BLOCK_WIDTH*i)+8;
-                    int y=(BLOCK_HEIGHT*j)+14;
-                    g.drawString(board.getValue(i,j), x, y);
+                    if(grid[j][i]==0) continue;
+                    g.setColor(colors[grid[j][i]]);
+                    int x=(BLOCK_WIDTH*i);
+                    int y=(BLOCK_HEIGHT*j);
+                    g.fillRect(x, y, BLOCK_WIDTH, BLOCK_HEIGHT);
+                    //g.drawString(board.getValue(i,j), x, y);
                 }
             }
-            
         }
     }
 
