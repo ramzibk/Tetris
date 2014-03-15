@@ -4,7 +4,6 @@
  */
 package org.bkramzi.tetris.tetrismvc.model;
 
-import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +30,12 @@ public class Board extends AbstractModel{
     public Tetrimino getCurrent() {
         return current;
     }
+    
+    public void setCurrent(Tetrimino current) {
+        this.current = current;
+        if(current!=null)
+            current.setBoard(this);
+    }
 
     public int[][] getGrid() {
         return grid;
@@ -46,12 +51,6 @@ public class Board extends AbstractModel{
     
     public void setGrid(int[][] grid) {
         this.grid = grid;
-    }
-    
-    public void setCurrent(Tetrimino current) {
-        this.current = current;
-        if(current!=null)
-            current.setBoard(this);
     }
     
     public List getFullLines(){
@@ -85,9 +84,10 @@ public class Board extends AbstractModel{
         return last;
     }
 
-    int set(int x, int y, int value) {
+    int setValue(int x, int y, int value) {
         int last = grid[y][x];
         grid[y][x] = value;
+        fireChange();
         return last;
     }
     public String toString(){
