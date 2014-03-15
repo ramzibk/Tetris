@@ -4,8 +4,6 @@
  */
 package org.bkramzi.tetris.tetrismvc.model;
 
-import java.awt.Color;
-
 /**
  *
  * @author ramzi
@@ -33,6 +31,7 @@ public abstract class Tetrimino extends AbstractModel{
         drag(board);
         moveX(-1);
         drop(board);
+        fireChange();
         return true;
     }
     
@@ -40,6 +39,7 @@ public abstract class Tetrimino extends AbstractModel{
         drag(board);
         moveX(+1);
         drop(board);
+        fireChange();
         return true;
     }
     
@@ -47,6 +47,7 @@ public abstract class Tetrimino extends AbstractModel{
         drag(board);
         moveY(+1); 
         drop(board);
+        fireChange();
         return true;
     }
         
@@ -54,6 +55,7 @@ public abstract class Tetrimino extends AbstractModel{
         drag(board);
         rotation = (rotation++) % shape.length;
         drop(board);
+        fireChange();
         return true;
     }
     
@@ -72,7 +74,7 @@ public abstract class Tetrimino extends AbstractModel{
             for(int j=0;j<this.shape[0].length;j++){
                 for(int i=0;i<this.shape[0][0].length;i++){
                     try{
-                        board.set(xpos+i,ypos+j,this.shape[rotation][j][i]*this.color);
+                        board.setValue(xpos+i,ypos+j,this.shape[rotation][j][i]*this.color);
                     }catch(IndexOutOfBoundsException iobe){
                         throw iobe;
                     }
