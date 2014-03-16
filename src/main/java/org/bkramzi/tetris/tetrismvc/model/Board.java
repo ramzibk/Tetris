@@ -7,12 +7,15 @@ package org.bkramzi.tetris.tetrismvc.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.bkramzi.tetris.tetrismvc.controller.BoardController;
 
 /**
  *
  * @author ramzi
  */
-public class Board extends AbstractModel{
+public class Board extends AbstractModel implements Cloneable{
     
     private static int XBlocks=12;
     private static int YBlocks=20;
@@ -22,11 +25,131 @@ public class Board extends AbstractModel{
     private int deleted;
     
     private Tetrimino current;
-
-    public Board() {
+    private BoardController controller;
+    
+    private Board(BoardController controller){
+        this.controller = controller;
         grid = new int[YBlocks][XBlocks];
     }
     
+    public Board() {
+        this(null);
+    }
+    
+    // Soft clone
+    @Override
+    protected Object clone(){
+        Board clone=null;
+        try {
+            clone = (Board)super.clone();
+            clone.setGrid(this.getGrid().clone());
+            for(int j=0;j<this.getGrid().length;j++){
+                clone.getGrid()[j] = this.getGrid()[j].clone();
+            }
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return clone;
+    }
+    
+    public void left(){
+        if(current==null) return;
+        Board back = (Board) this.clone();
+        drag(current);
+        current.moveX(-1);
+        try {
+            drop(current);
+        } catch (IndexOutOfBoundsException ex) {
+            // rollback
+            this.setGrid(back.getGrid());
+            current.moveX(+1);
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (GridCorruptedException ex) {
+            // rollback
+            this.setGrid(back.getGrid());
+            current.moveX(+1);
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        fireChange();
+    }
+    public void right(){
+        if(current!=null){
+            Board back = (Board) this.clone();
+            drag(current);
+            current.moveX(+1);
+            try {
+                drop(current);
+            } catch (IndexOutOfBoundsException ex) {
+                // rollback
+                this.setGrid(back.getGrid());
+                current.moveX(-1);
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (GridCorruptedException ex) {
+                // rollback
+                this.setGrid(back.getGrid());
+                current.moveX(-1);
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        fireChange();
+    }
+    public void down(){
+        if(current!=null){
+            Board back = (Board) this.clone();
+            drag(current);
+            current.moveY(+1);
+            try {
+                drop(current);
+            } catch (IndexOutOfBoundsException ex) {
+                // rollback
+                this.setGrid(back.getGrid());
+                current.moveY(-1);
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (GridCorruptedException ex) {
+                // rollback
+                this.setGrid(back.getGrid());
+                current.moveY(-1);
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        fireChange();
+    }
+    
+    public void rotate(){
+        if(current!=null){
+            Board back = (Board) this.clone();
+            drag(current);
+            current.setRotation(+1);
+            try {
+                drop(current);
+            } catch (IndexOutOfBoundsException ex) {
+                // rollback
+                this.setGrid(back.getGrid());
+                current.setRotation(-1);
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (GridCorruptedException ex) {
+                // rollback
+                this.setGrid(back.getGrid());
+                current.setRotation(-1);
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        fireChange();
+    }
+    public void hardDrop(){
+        if(current!=null){
+            try {
+                do{
+                    current.moveY(+1);
+                }while(drop(current));
+            } catch (IndexOutOfBoundsException ex) {
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (GridCorruptedException ex) {
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        fireChange();
+    }
     public Tetrimino getCurrent() {
         return current;
     }
@@ -40,17 +163,38 @@ public class Board extends AbstractModel{
     public int[][] getGrid() {
         return grid;
     }
-
-    public static int getXBlocks() {
-        return XBlocks;
-    }
-
-    public static int getYBlocks() {
-        return YBlocks;
-    }
     
     public void setGrid(int[][] grid) {
         this.grid = grid;
+    }
+    
+    public void drag(Tetrimino tetrimino){
+        if(tetrimino!=null){
+            for(int j=0;j<tetrimino.shape[0].length;j++){
+                for(int i=0;i<tetrimino.shape[0][0].length;i++){
+                    if(tetrimino.getValue(i,j)!=0)
+                        this.clear(tetrimino.getXpos()+i,tetrimino.getYpos()+j);
+                }
+            }
+        }
+    }
+    
+    public boolean drop(Tetrimino tetrimino)throws IndexOutOfBoundsException, GridCorruptedException{
+        if(tetrimino!=null){
+            for(int j=0;j<tetrimino.shape[0].length;j++){
+                for(int i=0;i<tetrimino.shape[0][0].length;i++){
+                    if(tetrimino.getValue(i, j)==0) continue;
+                    try{
+                        this.setValue(tetrimino.getXpos()+i,tetrimino.getYpos()+j,tetrimino.getValue(i,j));;
+                    }catch(IndexOutOfBoundsException iobe){
+                        throw iobe;
+                    } catch (GridCorruptedException ex) {
+                        throw ex;
+                    }
+                }
+            }
+        }
+        return true;
     }
     
     public List getFullLines(){
@@ -73,23 +217,26 @@ public class Board extends AbstractModel{
         while(it.hasNext()){
             int j = (Integer)it.next();
             for(int i=0;i<grid[j].length;i++){
-                grid[j][i]=0;
+                clear(i,j);
             }
         }
     }
     
-    int clear(int x, int y) {
+    public int clear(int x, int y) {
         int last = grid[y][x];
         grid[y][x]=0;
         return last;
     }
 
-    int setValue(int x, int y, int value) {
-        int last = grid[y][x];
-        grid[y][x] = value;
-        fireChange();
-        return last;
+    public int getValue(int i, int j) {
+        return grid[j][i];
     }
+    
+    public void setValue(int x, int y, int value) throws GridCorruptedException{
+        if(grid[y][x]!=0) throw new GridCorruptedException("GridCorruptedException at (x,y):"+x+","+y);
+        grid[y][x] = value;
+    }
+    
     public String toString(){
         StringBuilder builder = new StringBuilder();
         for(int j=0;j<grid.length;j++){
@@ -102,11 +249,15 @@ public class Board extends AbstractModel{
     }
 
     public void next() {
-        current.down();
+        down();
         fireChange();
     }
+    
+    public static int getXBlocks() {
+        return XBlocks;
+    }
 
-    public String getValue(int i, int j) {
-        return String.valueOf(grid[j][i]);
+    public static int getYBlocks() {
+        return YBlocks;
     }
 }

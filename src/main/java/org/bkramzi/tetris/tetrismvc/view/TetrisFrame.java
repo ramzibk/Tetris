@@ -31,7 +31,7 @@ public class TetrisFrame extends JFrame{
     }
     
     public void intializeComponents(){
-        getContentPane().add(view);
+        getContentPane().add(boardView);
         menubar.add(gameMenu);
         gameMenu.add(newGame);
         menubar.add(settingsMenu);
@@ -39,16 +39,15 @@ public class TetrisFrame extends JFrame{
         this.setMenuBar(menubar);
         this.addKeyListener(boardController);
         board.setCurrent(tetrimino);
-        board.addChangeListener(view);
         timer.start();
         setVisible(true);
         pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
-    Tetrimino tetrimino = new S_Tetrimino();
     Board board = new Board();
-    BoardController boardController = new BoardController(board);
-    BoardView view = new BoardView(board);
+    Tetrimino tetrimino = new S_Tetrimino();
+    BoardView boardView = new BoardView(board);
+    BoardController boardController = new BoardController(board,boardView);
     Timer timer = new Timer(board);
     MenuBar menubar = new MenuBar();
     Menu gameMenu = new Menu("Game");

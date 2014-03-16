@@ -4,6 +4,9 @@
  */
 package org.bkramzi.tetris.tetrismvc.model;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author ramzi
@@ -16,9 +19,6 @@ public abstract class Tetrimino extends AbstractModel{
     protected int[][][] shape;
     protected Board board;
 
-    public int moveX(int steps){ return xpos+=steps;}
-    public int moveY(int steps){ return ypos+=steps;}
-
     public Board getBoard() {
         return board;
     }
@@ -27,62 +27,23 @@ public abstract class Tetrimino extends AbstractModel{
         this.board = board;
     }
     
-    synchronized public boolean left(){
-        drag(board);
-        moveX(-1);
-        drop(board);
-        fireChange();
-        return true;
+    public void setRotation(int turn){
+        this.rotation = (this.rotation+turn)%shape.length;
     }
-    
-    synchronized public boolean right(){ 
-        drag(board);
-        moveX(+1);
-        drop(board);
-        fireChange();
-        return true;
+    public int getRotation(){return rotation;}    
+    public int moveX(int steps){ 
+        xpos+=steps;
+        return xpos;
     }
-    
-    synchronized public boolean down(){ 
-        drag(board);
-        moveY(+1); 
-        drop(board);
-        fireChange();
-        return true;
+    public int getXpos(){return xpos;}
+    public int moveY(int steps){ 
+        ypos+=steps;
+        return ypos;
     }
-        
-    synchronized public boolean rotate(){
-        drag(board);
-        rotation = (rotation++) % shape.length;
-        drop(board);
-        fireChange();
-        return true;
+    public int getYpos(){return ypos;}
+    public int getValue(int i, int j){
+        return shape[rotation][j][i]*color;
     }
-    
-    public void drag(Board board){
-        if(board!=null){
-            for(int j=0;j<shape[0].length;j++){
-                for(int i=0;i<shape[0][0].length;i++){
-                    int value = board.clear(xpos+i,ypos+j);
-                }
-            }
-        }
-    }
-    
-    public void drop(Board board)throws IndexOutOfBoundsException{
-        if(board!=null){
-            for(int j=0;j<this.shape[0].length;j++){
-                for(int i=0;i<this.shape[0][0].length;i++){
-                    try{
-                        board.setValue(xpos+i,ypos+j,this.shape[rotation][j][i]*this.color);
-                    }catch(IndexOutOfBoundsException iobe){
-                        throw iobe;
-                    }
-                }
-            }
-        }
-    }
-    
     public String toString(){
         StringBuilder builder = new StringBuilder();
         for(int j=0;j<shape.length;j++){
@@ -91,21 +52,5 @@ public abstract class Tetrimino extends AbstractModel{
             }
         }
         return builder.toString();
-    }
-
-    public int getXpos() {
-        return xpos;
-    }
-
-    public void setXpos(int xpos) {
-        this.xpos = xpos;
-    }
-
-    public int getYpos() {
-        return ypos;
-    }
-
-    public void setYpos(int ypos) {
-        this.ypos = ypos;
     }
 }

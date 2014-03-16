@@ -4,8 +4,6 @@
  */
 package org.bkramzi.tetris.tetrismvc.model;
 
-import java.awt.Color;
-
 /**
  *
  * @author ramzi

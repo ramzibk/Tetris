@@ -2,7 +2,10 @@ package org.bkramzi.tetris.tetrismvc.controller;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bkramzi.tetris.tetrismvc.model.Board;
+import org.bkramzi.tetris.tetrismvc.view.BoardView;
 
 public class BoardController implements KeyListener,Runnable{
 
@@ -15,10 +18,12 @@ public class BoardController implements KeyListener,Runnable{
 
     private Thread t;
     private Board board;
+    private BoardView boardView;
     private int[] keys={KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT,KeyEvent.VK_DOWN, KeyEvent.VK_UP,KeyEvent.VK_SPACE};
 	
-    public BoardController(Board board){
+    public BoardController(Board board, BoardView boardView){
         this.board = board;
+        this.boardView = boardView;
 	t = new Thread (this);
         t.start();
     }
@@ -36,23 +41,29 @@ public class BoardController implements KeyListener,Runnable{
         }
     }
     
-    public void setActive(Boolean active){
-        this.active= active;
+    public void start(){
+        this.active= true;
+        t.start();
     }
-	
+    
+    public void stop(){
+        this.active = false;
+        run();
+    }
+    
     public void handleKeyBord() {
         // TODO Auto-generated method stub
         if(board!=null && board.getCurrent() != null){
                 if(hardrop  == true){
-                    while(board.getCurrent().down()){}
+                    board.hardDrop();
                 }else if(right == true) {
-                    board.getCurrent().right();
+                    board.right();
 		}else if(left == true){
-                    board.getCurrent().left();
+                    board.left();
                 }else if(down == true){
-                    board.getCurrent().down();
+                    board.down();
 		}else if(rotate == true){
-                    board.getCurrent().rotate();
+                    board.rotate();
 		}
                 hardrop = false;
                 right=false;
@@ -60,10 +71,12 @@ public class BoardController implements KeyListener,Runnable{
                 down=false;
                 rotate=false;
             }
-    }	
+    }
+    
     @Override
     public void keyPressed(KeyEvent e) {
         // TODO Auto-generated method stub
+        Logger.getLogger(BoardController.class.getName()).log(Level.INFO, "KeyPressed time:"+System.currentTimeMillis());
         if(e.getKeyCode() == keys[0]){
             left = true;
         }else if(e.getKeyCode() == keys[1]){

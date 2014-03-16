@@ -33,6 +33,8 @@ public class BoardView extends JComponent implements ChangeListener{
     
     public BoardView(Board board) {
         this.board = board;
+        if(board!=null)
+            board.addChangeListener(this);
     }
 
     @Override
