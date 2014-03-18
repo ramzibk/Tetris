@@ -30,6 +30,6 @@ public class T_Tetrimino extends Tetrimino{
                          {1,1,0},
                          {1,0,0}}};
     
-        this.color =2;
+        this.color =6;
     }
 }
