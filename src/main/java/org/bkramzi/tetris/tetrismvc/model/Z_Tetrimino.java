@@ -30,6 +30,6 @@ public class Z_Tetrimino extends Tetrimino{
                          {1,1,0},
                          {0,1,0}}};
     
-        this.color =7;
+        this.color = 7;
     }
 }
