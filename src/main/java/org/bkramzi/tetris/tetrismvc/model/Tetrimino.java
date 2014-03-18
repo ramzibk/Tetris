@@ -11,16 +11,26 @@ import java.util.logging.Logger;
  *
  * @author ramzi
  */
-public abstract class Tetrimino extends AbstractModel{
+public abstract class Tetrimino extends AbstractModel implements Cloneable{
     
     protected int color;
-    protected int xpos, ypos;
+    protected int xpos=0, ypos=0;
     protected int rotation;
     protected int[][][] shape;
     protected Board board;
 
     public Board getBoard() {
         return board;
+    }
+    
+    public Object clone(){
+        Object clone=null;
+        try {
+            clone = super.clone();
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(Tetrimino.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return clone;
     }
 
     public void setBoard(Board board) {
