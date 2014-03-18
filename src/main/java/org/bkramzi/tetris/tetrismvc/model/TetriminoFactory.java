@@ -5,9 +5,7 @@
 package org.bkramzi.tetris.tetrismvc.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -32,6 +30,6 @@ public class TetriminoFactory {
         Tetrimino tetrimino;
         // Random generator
         int type = (int)(Math.random()*((double)bucket.size()));
-        return bucket.get(type);
+        return (Tetrimino)bucket.get(type).clone();
     }
 }
