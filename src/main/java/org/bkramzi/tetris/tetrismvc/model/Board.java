@@ -52,8 +52,8 @@ public class Board extends AbstractModel implements Cloneable{
         return clone;
     }
     
-    public void left(){
-        if(current==null) return;
+    public boolean left(){
+        if(current==null) return true;
         Board back = (Board) this.clone();
         drag(current);
         current.moveX(-1);
@@ -64,89 +64,100 @@ public class Board extends AbstractModel implements Cloneable{
             this.setGrid(back.getGrid());
             current.moveX(+1);
             Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            return true;
         } catch (GridCorruptedException ex) {
             // rollback
             this.setGrid(back.getGrid());
             current.moveX(+1);
             Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
         fireChange();
+        return true;
     }
-    public void right(){
-        if(current!=null){
+    public boolean right(){
+        if(current==null)return true;
             Board back = (Board) this.clone();
-            drag(current);
-            current.moveX(+1);
-            try {
-                drop(current);
-            } catch (IndexOutOfBoundsException ex) {
-                // rollback
-                this.setGrid(back.getGrid());
-                current.moveX(-1);
-                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (GridCorruptedException ex) {
-                // rollback
-                this.setGrid(back.getGrid());
-                current.moveX(-1);
-                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        drag(current);
+        current.moveX(+1);
+        try {
+            drop(current);
+        } catch (IndexOutOfBoundsException ex) {
+            // rollback
+            this.setGrid(back.getGrid());
+            current.moveX(-1);
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (GridCorruptedException ex) {
+            // rollback
+            this.setGrid(back.getGrid());
+            current.moveX(-1);
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
         fireChange();
+        return true;
     }
-    public void down(){
-        if(current!=null){
-            Board back = (Board) this.clone();
-            drag(current);
-            current.moveY(+1);
-            try {
-                drop(current);
-            } catch (IndexOutOfBoundsException ex) {
-                // rollback
-                this.setGrid(back.getGrid());
-                current.moveY(-1);
-                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (GridCorruptedException ex) {
-                // rollback
-                this.setGrid(back.getGrid());
-                current.moveY(-1);
-                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-            }
+    public boolean down(){
+        if(current==null) return true;
+        Board back = (Board) this.clone();
+        drag(current);
+        current.moveY(+1);
+        try {
+            drop(current);
+        } catch (IndexOutOfBoundsException ex) {
+            // rollback
+            this.setGrid(back.getGrid());
+            current.moveY(-1);
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (GridCorruptedException ex) {
+            // rollback
+            this.setGrid(back.getGrid());
+            current.moveY(-1);
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
         fireChange();
+        return true;
     }
     
-    public void rotate(){
-        if(current!=null){
-            Board back = (Board) this.clone();
-            drag(current);
-            current.setRotation(+1);
-            try {
-                drop(current);
-            } catch (IndexOutOfBoundsException ex) {
-                // rollback
-                this.setGrid(back.getGrid());
-                current.setRotation(-1);
-                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (GridCorruptedException ex) {
-                // rollback
-                this.setGrid(back.getGrid());
-                current.setRotation(-1);
-                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-            }
+    public boolean rotate(){
+        if(current==null) return true;
+        Board back = (Board) this.clone();
+        drag(current);
+        current.setRotation(+1);
+        try {
+            drop(current);
+        } catch (IndexOutOfBoundsException ex) {
+            // rollback
+            this.setGrid(back.getGrid());
+            current.setRotation(-1);
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (GridCorruptedException ex) {
+            // rollback
+            this.setGrid(back.getGrid());
+            current.setRotation(-1);
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
         fireChange();
+        return true;
     }
     public void hardDrop(){
-        if(current!=null){
-            try {
-                do{
-                    current.moveY(+1);
-                }while(drop(current));
-            } catch (IndexOutOfBoundsException ex) {
-                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (GridCorruptedException ex) {
-                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        if (current == null) {
+            return;
+        }
+        try {
+            do {
+                drag(current);
+                current.moveY(+1);
+            } while (drop(current));
+        } catch (IndexOutOfBoundsException ex) {
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (GridCorruptedException ex) {
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
         }
         fireChange();
     }
