@@ -145,16 +145,7 @@ public class Board extends AbstractModel implements Cloneable{
         if (current == null) {
             return;
         }
-        try {
-            do {
-                drag(current);
-                current.moveY(+1);
-            } while (drop(current));
-        } catch (IndexOutOfBoundsException ex) {
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (GridCorruptedException ex) {
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        while (down()){}
         fireChange();
     }
     public Tetrimino getCurrent() {
@@ -255,7 +246,7 @@ public class Board extends AbstractModel implements Cloneable{
         return builder.toString();
     }
 
-    public void next() {
+    synchronized public void next() {
         if(!down()){
             current = factory.getTetrimino();
         }
