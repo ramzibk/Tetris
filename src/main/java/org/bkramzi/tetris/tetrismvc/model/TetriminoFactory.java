@@ -4,7 +4,9 @@
  */
 package org.bkramzi.tetris.tetrismvc.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,20 +15,23 @@ import java.util.Map;
  */
 public class TetriminoFactory {
     
-    Map<Integer,Tetrimino> bucket;
-
-    public TetriminoFactory() {
-        this.bucket = new HashMap<Integer, Tetrimino>();
-    }
+    List<Tetrimino> bucket;
     
-    private void TetriminoFactory(){
-        bucket.put(1, new I_Tetrimino());
-        bucket.put(1, new S_Tetrimino());
+    public TetriminoFactory(){
+        this.bucket = new ArrayList<Tetrimino>();
+        bucket.add(new I_Tetrimino());
+        bucket.add(new S_Tetrimino());
+        bucket.add(new Z_Tetrimino());
+        bucket.add(new J_Tetrimino());
+        bucket.add(new L_Tetrimino());
+        bucket.add(new T_Tetrimino());
+        bucket.add(new O_Tetrimino());
     }
     
     public Tetrimino getTetrimino(){
         Tetrimino tetrimino;
         // Random generator
-        return bucket.get(1);
+        int type = (int)(Math.random()*((double)bucket.size()));
+        return bucket.get(type);
     }
 }
