@@ -25,15 +25,11 @@ public class Board extends AbstractModel implements Cloneable{
     private int deleted;
     
     private Tetrimino current;
-    private BoardController controller;
+    private TetriminoFactory factory;
     
-    private Board(BoardController controller){
-        this.controller = controller;
+    public Board(){
         grid = new int[YBlocks][XBlocks];
-    }
-    
-    public Board() {
-        this(null);
+        factory = new TetriminoFactory();
     }
     
     // Soft clone
@@ -52,7 +48,7 @@ public class Board extends AbstractModel implements Cloneable{
         return clone;
     }
     
-    public boolean left(){
+    synchronized public boolean left(){
         if(current==null) return true;
         Board back = (Board) this.clone();
         drag(current);
@@ -75,7 +71,7 @@ public class Board extends AbstractModel implements Cloneable{
         fireChange();
         return true;
     }
-    public boolean right(){
+    synchronized public boolean right(){
         if(current==null)return true;
             Board back = (Board) this.clone();
         drag(current);
@@ -98,7 +94,7 @@ public class Board extends AbstractModel implements Cloneable{
         fireChange();
         return true;
     }
-    public boolean down(){
+    synchronized public boolean down(){
         if(current==null) return true;
         Board back = (Board) this.clone();
         drag(current);
@@ -122,7 +118,7 @@ public class Board extends AbstractModel implements Cloneable{
         return true;
     }
     
-    public boolean rotate(){
+    synchronized public boolean rotate(){
         if(current==null) return true;
         Board back = (Board) this.clone();
         drag(current);
@@ -260,7 +256,9 @@ public class Board extends AbstractModel implements Cloneable{
     }
 
     public void next() {
-        down();
+        if(!down()){
+            current = factory.getTetrimino();
+        }
         fireChange();
     }
     
