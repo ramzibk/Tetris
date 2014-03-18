@@ -26,20 +26,33 @@ public abstract class Tetrimino extends AbstractModel{
     public void setBoard(Board board) {
         this.board = board;
     }
+    public void setShape(int[][] shape,int rotation){
+        this.shape[rotation]=shape;
+    }
     
     public void setRotation(int turn){
         this.rotation = (this.rotation+turn)%shape.length;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
     public int getRotation(){return rotation;}    
     public int moveX(int steps){ 
         xpos+=steps;
         return xpos;
     }
+    public void setXpos(int xpos){ this.xpos=xpos;}
     public int getXpos(){return xpos;}
     public int moveY(int steps){ 
         ypos+=steps;
         return ypos;
     }
+    public void setYpos(int ypos){ this.ypos=ypos;}
     public int getYpos(){return ypos;}
     public int getValue(int i, int j){
         return shape[rotation][j][i]*color;
