@@ -54,17 +54,17 @@ public class BoardController implements KeyListener,Runnable{
     public void handleKeyBord() {
         // TODO Auto-generated method stub
         if(board!=null && board.getCurrent() != null){
-                if(hardrop  == true){
-                    board.hardDrop();
-                }else if(right == true) {
+                if(rotate == true){
+                    board.rotate();
+		}else if(right == true) {
                     board.right();
 		}else if(left == true){
                     board.left();
                 }else if(down == true){
-                    board.down();
-		}else if(rotate == true){
-                    board.rotate();
-		}
+                    if(!board.down()) board.next();
+		}if(hardrop  == true){
+                    board.hardDrop();
+                }
                 hardrop = false;
                 right=false;
                 left=false;
