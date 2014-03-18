@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bkramzi.tetris.tetrismvc.controller.BoardController;
 
 /**
  *
@@ -18,14 +17,16 @@ import org.bkramzi.tetris.tetrismvc.controller.BoardController;
 public class Board extends AbstractModel implements Cloneable{
     
     private static int XBlocks=12;
-    private static int YBlocks=20;
+    private static int YBlocks=24;
     private int[][] grid;
     private int score;
     private int level;
-    private int deleted;
+    private List fullLines = new ArrayList<Integer>();
+    private boolean gameover = false;
     
     private Tetrimino current;
     private TetriminoFactory factory;
+    private static Logger logger = Logger.getLogger(Board.class.getName());
     
     public Board(){
         grid = new int[YBlocks][XBlocks];
@@ -43,9 +44,22 @@ public class Board extends AbstractModel implements Cloneable{
                 clone.getGrid()[j] = this.getGrid()[j].clone();
             }
         } catch (CloneNotSupportedException ex) {
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
         return clone;
+    }
+    
+    public void initBoard(){
+        gameover=false;
+        score=0;
+        level=0;
+        fullLines.clear();
+        for(int j=0;j<grid.length;j++){
+            for(int i=0;i<grid[0].length;i++){
+                grid[j][i]=0;            
+            }
+        }
+        current=null;
     }
     
     synchronized public boolean left(){
@@ -59,7 +73,7 @@ public class Board extends AbstractModel implements Cloneable{
             // rollback
             this.setGrid(back.getGrid());
             current.moveX(+1);
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             return true;
         } catch (GridCorruptedException ex) {
             // rollback
@@ -105,13 +119,13 @@ public class Board extends AbstractModel implements Cloneable{
             // rollback
             this.setGrid(back.getGrid());
             current.moveY(-1);
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             return false;
         } catch (GridCorruptedException ex) {
             // rollback
             this.setGrid(back.getGrid());
             current.moveY(-1);
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             return false;
         }
         fireChange();
@@ -129,13 +143,13 @@ public class Board extends AbstractModel implements Cloneable{
             // rollback
             this.setGrid(back.getGrid());
             current.setRotation(-1);
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             return false;
         } catch (GridCorruptedException ex) {
             // rollback
             this.setGrid(back.getGrid());
             current.setRotation(-1);
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             return false;
         }
         fireChange();
@@ -195,29 +209,40 @@ public class Board extends AbstractModel implements Cloneable{
         return true;
     }
     
-    public List getFullLines(){
-        List lines = new ArrayList();
+    public void getFullLines(){
         for(int j=0;j<grid.length;j++){
             boolean full = true;
             for(int i=0;i<grid[0].length;i++){
-                if(grid[j][i]!=1){
+                if(grid[j][i]==0){
                     full = false;
                     break;
                 }
             }
-            if(full) lines.add(j);
+            if(full) fullLines.add(j);
         }
-        return lines;
+        fireChange();
     }
     
-    public void clearFullLines(List lines){
-        Iterator it = lines.iterator();
+    public void clearFullLines(){
+        Iterator it = fullLines.iterator();
         while(it.hasNext()){
             int j = (Integer)it.next();
             for(int i=0;i<grid[j].length;i++){
                 clear(i,j);
             }
+            // repack
+            for(int k=j;k>0;k--){
+                for(int i=0;i<grid[j].length;i++){
+                 grid[k][i] = grid[k-1][i];
+                }
+            }
+            // add empty line at the top
+            for(int i=0;i<grid[j].length;i++){
+                 grid[0][i] = 0;
+            }
         }
+        fullLines.clear();
+        fireChange();
     }
     
     public int clear(int x, int y) {
@@ -246,9 +271,20 @@ public class Board extends AbstractModel implements Cloneable{
         return builder.toString();
     }
 
+    public void endGame(){
+        current = null;
+        gameover = true;
+    }
+    
     synchronized public void next() {
-        if(!down()){
-            current = factory.getTetrimino();
+        if(current!=null && !down()){
+            getFullLines();
+            clearFullLines();
+            if(current.getYpos()<4){
+                endGame();
+            }else{
+                current = factory.getTetrimino();
+            }
         }
         fireChange();
     }
