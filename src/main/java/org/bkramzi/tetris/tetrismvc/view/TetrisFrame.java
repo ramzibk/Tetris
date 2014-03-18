@@ -14,6 +14,7 @@ import org.bkramzi.tetris.tetrismvc.controller.Timer;
 import org.bkramzi.tetris.tetrismvc.model.Board;
 import org.bkramzi.tetris.tetrismvc.model.S_Tetrimino;
 import org.bkramzi.tetris.tetrismvc.model.Tetrimino;
+import org.bkramzi.tetris.tetrismvc.model.TetriminoFactory;
 
 /**
  *
@@ -38,6 +39,7 @@ public class TetrisFrame extends JFrame{
         menubar.add(helpHenu);
         this.setMenuBar(menubar);
         this.addKeyListener(boardController);
+        tetrimino = new TetriminoFactory().getTetrimino();
         board.setCurrent(tetrimino);
         timer.start();
         setVisible(true);
@@ -45,7 +47,7 @@ public class TetrisFrame extends JFrame{
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
     Board board = new Board();
-    Tetrimino tetrimino = new S_Tetrimino();
+    Tetrimino tetrimino;
     BoardView boardView = new BoardView(board);
     BoardController boardController = new BoardController(board,boardView);
     Timer timer = new Timer(board);
