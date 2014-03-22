@@ -32,7 +32,6 @@ public abstract class Tetrimino extends AbstractModel implements Cloneable{
         }
         return clone;
     }
-
     public void setBoard(Board board) {
         this.board = board;
     }
@@ -53,12 +52,14 @@ public abstract class Tetrimino extends AbstractModel implements Cloneable{
     }
     public int getRotation(){return rotation;}    
     public int moveX(int steps){ 
+        System.out.println("moveX "+steps +"steps");
         xpos+=steps;
         return xpos;
     }
     public void setXpos(int xpos){ this.xpos=xpos;}
     public int getXpos(){return xpos;}
-    public int moveY(int steps){ 
+    public int moveY(int steps){
+        System.out.println("MoveY "+steps+" steps");
         ypos+=steps;
         return ypos;
     }
