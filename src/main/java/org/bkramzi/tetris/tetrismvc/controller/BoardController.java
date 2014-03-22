@@ -17,6 +17,7 @@ public class BoardController implements KeyListener,Runnable{
     private boolean hardrop = false;
 
     private Thread t;
+    private Timer timer;
     private Board board;
     private BoardView boardView;
     private int[] keys={KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT,KeyEvent.VK_DOWN, KeyEvent.VK_UP,KeyEvent.VK_SPACE};
@@ -26,6 +27,8 @@ public class BoardController implements KeyListener,Runnable{
         this.boardView = boardView;
 	t = new Thread (this);
         t.start();
+        timer = new Timer(board);
+        timer.start();
     }
 	
     @Override
@@ -43,12 +46,12 @@ public class BoardController implements KeyListener,Runnable{
     
     public void start(){
         this.active= true;
-        t.start();
+        timer = new Timer(board);
+        run();
     }
     
     public void stop(){
         this.active = false;
-        run();
     }
     
     public void handleKeyBord() {
@@ -61,7 +64,8 @@ public class BoardController implements KeyListener,Runnable{
 		}else if(left == true){
                     board.left();
                 }else if(down == true){
-                    if(!board.down()) board.next();
+                    if(!board.down()) 
+                        board.next();
 		}if(hardrop  == true){
                     board.hardDrop();
                 }
@@ -76,7 +80,6 @@ public class BoardController implements KeyListener,Runnable{
     @Override
     public void keyPressed(KeyEvent e) {
         // TODO Auto-generated method stub
-        Logger.getLogger(BoardController.class.getName()).log(Level.INFO, "KeyPressed time:"+System.currentTimeMillis());
         if(e.getKeyCode() == keys[0]){
             left = true;
         }else if(e.getKeyCode() == keys[1]){
