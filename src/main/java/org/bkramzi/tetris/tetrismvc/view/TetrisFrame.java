@@ -7,14 +7,12 @@ package org.bkramzi.tetris.tetrismvc.view;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.bkramzi.tetris.tetrismvc.controller.BoardController;
-import org.bkramzi.tetris.tetrismvc.controller.Timer;
 import org.bkramzi.tetris.tetrismvc.model.Board;
-import org.bkramzi.tetris.tetrismvc.model.S_Tetrimino;
-import org.bkramzi.tetris.tetrismvc.model.Tetrimino;
-import org.bkramzi.tetris.tetrismvc.model.TetriminoFactory;
 
 /**
  *
@@ -32,25 +30,30 @@ public class TetrisFrame extends JFrame{
     }
     
     public void intializeComponents(){
-        getContentPane().add(boardView);
         menubar.add(gameMenu);
         gameMenu.add(newGame);
+        newGame.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                boardController.start();
+            }
+        });
         menubar.add(settingsMenu);
         menubar.add(helpHenu);
         this.setMenuBar(menubar);
+        board = new Board();
+        board.initBoard();
+        boardView = new BoardView(board);
+        boardController = new BoardController(board,boardView);
         this.addKeyListener(boardController);
-        tetrimino = new TetriminoFactory().getTetrimino();
-        board.setCurrent(tetrimino);
-        timer.start();
+        getContentPane().add(boardView);
         setVisible(true);
         pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
-    Board board = new Board();
-    Tetrimino tetrimino;
-    BoardView boardView = new BoardView(board);
-    BoardController boardController = new BoardController(board,boardView);
-    Timer timer = new Timer(board);
+    
+    Board board;
+    BoardView boardView;
+    BoardController boardController;
     MenuBar menubar = new MenuBar();
     Menu gameMenu = new Menu("Game");
     MenuItem newGame = new MenuItem("New");
