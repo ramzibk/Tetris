@@ -24,7 +24,7 @@ public class Timer extends Thread{
     public void run(){
         while(active){
             board.next();
-            //System.out.println(board.toString());
+            System.out.println("timer.next");
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
