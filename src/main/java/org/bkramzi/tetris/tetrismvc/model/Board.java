@@ -17,7 +17,8 @@ import java.util.logging.Logger;
 public class Board extends AbstractModel implements Cloneable{
     
     private static int XBlocks=12;
-    private static int YBlocks=24;
+    private static int YBlocks=20;
+    private static int BUFFER_SIZE=4;
     private int[][] grid;
     private int score;
     private int level;
@@ -29,8 +30,9 @@ public class Board extends AbstractModel implements Cloneable{
     private static Logger logger = Logger.getLogger(Board.class.getName());
     
     public Board(){
-        grid = new int[YBlocks][XBlocks];
+        grid = new int[YBlocks+BUFFER_SIZE][XBlocks];
         factory = new TetriminoFactory();
+        initBoard();
     }
     
     // Soft clone
@@ -59,11 +61,13 @@ public class Board extends AbstractModel implements Cloneable{
                 grid[j][i]=0;            
             }
         }
-        current=null;
+        factory= new TetriminoFactory();
+        setCurrent(factory.getTetrimino());
     }
     
-    synchronized public boolean left(){
-        if(current==null) return true;
+    public synchronized boolean left(){
+        if(current==null) throw new NullPointerException("Current tetrimino is null");
+        System.out.println("left");
         Board back = (Board) this.clone();
         drag(current);
         current.moveX(-1);
@@ -73,7 +77,7 @@ public class Board extends AbstractModel implements Cloneable{
             // rollback
             this.setGrid(back.getGrid());
             current.moveX(+1);
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "x,y:"+current.getXpos()+","+current.getYpos(), ex);
             return true;
         } catch (GridCorruptedException ex) {
             // rollback
@@ -85,9 +89,9 @@ public class Board extends AbstractModel implements Cloneable{
         fireChange();
         return true;
     }
-    synchronized public boolean right(){
-        if(current==null)return true;
-            Board back = (Board) this.clone();
+    public synchronized boolean right(){
+        if(current==null) throw new NullPointerException("Current tetrimino is null");
+        Board back = (Board) this.clone();
         drag(current);
         current.moveX(+1);
         try {
@@ -96,7 +100,7 @@ public class Board extends AbstractModel implements Cloneable{
             // rollback
             this.setGrid(back.getGrid());
             current.moveX(-1);
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE,  "x,y:"+current.getXpos()+","+current.getYpos(), ex);
             return false;
         } catch (GridCorruptedException ex) {
             // rollback
@@ -108,8 +112,8 @@ public class Board extends AbstractModel implements Cloneable{
         fireChange();
         return true;
     }
-    synchronized public boolean down(){
-        if(current==null) return true;
+    public synchronized boolean down(){
+        if(current==null) throw new NullPointerException("Current tetrimino is null");
         Board back = (Board) this.clone();
         drag(current);
         current.moveY(+1);
@@ -119,7 +123,7 @@ public class Board extends AbstractModel implements Cloneable{
             // rollback
             this.setGrid(back.getGrid());
             current.moveY(-1);
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "x,y:"+current.getXpos()+","+current.getYpos(), ex);
             return false;
         } catch (GridCorruptedException ex) {
             // rollback
@@ -132,8 +136,8 @@ public class Board extends AbstractModel implements Cloneable{
         return true;
     }
     
-    synchronized public boolean rotate(){
-        if(current==null) return true;
+    public synchronized boolean rotate(){
+        if(current==null) throw new NullPointerException("Current tetrimino is null");
         Board back = (Board) this.clone();
         drag(current);
         current.setRotation(+1);
@@ -143,7 +147,7 @@ public class Board extends AbstractModel implements Cloneable{
             // rollback
             this.setGrid(back.getGrid());
             current.setRotation(-1);
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "x,y:"+current.getXpos()+","+current.getYpos(), ex);
             return false;
         } catch (GridCorruptedException ex) {
             // rollback
@@ -157,7 +161,7 @@ public class Board extends AbstractModel implements Cloneable{
     }
     public void hardDrop(){
         if (current == null) {
-            return;
+            throw new NullPointerException("Current tetrimino is null");
         }
         while (down()){}
         fireChange();
@@ -182,6 +186,7 @@ public class Board extends AbstractModel implements Cloneable{
     
     public void drag(Tetrimino tetrimino){
         if(tetrimino!=null){
+            System.out.println("drag");
             for(int j=0;j<tetrimino.shape[0].length;j++){
                 for(int i=0;i<tetrimino.shape[0][0].length;i++){
                     if(tetrimino.getValue(i,j)!=0)
@@ -193,6 +198,7 @@ public class Board extends AbstractModel implements Cloneable{
     
     public boolean drop(Tetrimino tetrimino)throws IndexOutOfBoundsException, GridCorruptedException{
         if(tetrimino!=null){
+            System.out.println("drop");
             for(int j=0;j<tetrimino.shape[0].length;j++){
                 for(int i=0;i<tetrimino.shape[0][0].length;i++){
                     if(tetrimino.getValue(i, j)==0) continue;
@@ -294,6 +300,6 @@ public class Board extends AbstractModel implements Cloneable{
     }
 
     public static int getYBlocks() {
-        return YBlocks;
+        return YBlocks+BUFFER_SIZE;
     }
 }
