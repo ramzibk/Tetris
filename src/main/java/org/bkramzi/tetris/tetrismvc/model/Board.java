@@ -215,7 +215,7 @@ public class Board extends AbstractModel implements Cloneable{
         return true;
     }
     
-    public void getFullLines(){
+    public List getFullLines(){
         for(int j=0;j<grid.length;j++){
             boolean full = true;
             for(int i=0;i<grid[0].length;i++){
@@ -227,15 +227,18 @@ public class Board extends AbstractModel implements Cloneable{
             if(full) fullLines.add(j);
         }
         fireChange();
+        return fullLines;
     }
     
-    public void clearFullLines(){
+    public int clearFullLines(){
+        int deleted  = 0;
         Iterator it = fullLines.iterator();
         while(it.hasNext()){
             int j = (Integer)it.next();
             for(int i=0;i<grid[j].length;i++){
                 clear(i,j);
             }
+            deleted++;
             // repack
             for(int k=j;k>0;k--){
                 for(int i=0;i<grid[j].length;i++){
@@ -249,6 +252,7 @@ public class Board extends AbstractModel implements Cloneable{
         }
         fullLines.clear();
         fireChange();
+        return deleted;
     }
     
     public int clear(int x, int y) {
@@ -285,8 +289,8 @@ public class Board extends AbstractModel implements Cloneable{
     synchronized public void next() {
         if(current!=null && !down()){
             getFullLines();
-            clearFullLines();
-            if(current.getYpos()<4){
+            updateScore(clearFullLines());
+            if(current.getYpos()<BUFFER_SIZE){
                 endGame();
             }else{
                 current = factory.getTetrimino();
@@ -302,4 +306,13 @@ public class Board extends AbstractModel implements Cloneable{
     public static int getYBlocks() {
         return YBlocks+BUFFER_SIZE;
     }
+
+    private void updateScore(int deleted) {
+        this.score += deleted*(20+(20*deleted));
+    }
+
+    public boolean isGameover() {
+        return gameover;
+    }
+    
 }

@@ -9,7 +9,7 @@ import org.bkramzi.tetris.tetrismvc.view.BoardView;
 
 public class BoardController implements KeyListener,Runnable{
 
-    private boolean active = true;
+    private boolean active = false;
     private boolean right = false;
     private boolean left = false;
     private boolean down = false;
@@ -34,24 +34,30 @@ public class BoardController implements KeyListener,Runnable{
     @Override
     public void run() {
     	// TODO Auto-generated method stub
-    	while(active){
+    	while(true){
+            if(active)
             handleKeyBord();
-            try{
-                Thread.sleep(120);
+                try{
+                Thread.sleep(100);
             }catch(InterruptedException ie) {
                 ie.printStackTrace();
             }
         }
     }
     
-    public void start(){
-        this.active= true;
-        timer = new Timer(board);
-        run();
+    public void startNew() {
+        board.initBoard();
+        resume();
     }
     
-    public void stop(){
+    public void resume(){
+        active = true;
+        timer.setActive(true);
+    }
+    
+    public void pause(){
         this.active = false;
+        timer.setActive(false);
     }
     
     public void handleKeyBord() {
@@ -80,6 +86,7 @@ public class BoardController implements KeyListener,Runnable{
     @Override
     public void keyPressed(KeyEvent e) {
         // TODO Auto-generated method stub
+        System.out.println("Key pressed");
         if(e.getKeyCode() == keys[0]){
             left = true;
         }else if(e.getKeyCode() == keys[1]){

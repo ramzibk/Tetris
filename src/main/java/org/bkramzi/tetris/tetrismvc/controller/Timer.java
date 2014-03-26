@@ -14,7 +14,7 @@ import org.bkramzi.tetris.tetrismvc.model.Board;
  */
 public class Timer extends Thread{
     
-    private boolean active = true;
+    private boolean active = false;
     private Board board;
 
     public Timer(Board board) {
@@ -22,9 +22,9 @@ public class Timer extends Thread{
     }
     
     public void run(){
-        while(active){
-            board.next();
-            System.out.println("timer.next");
+        while(true){
+            if(active)
+                board.next();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {

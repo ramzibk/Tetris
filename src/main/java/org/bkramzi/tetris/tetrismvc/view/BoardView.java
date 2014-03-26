@@ -6,7 +6,9 @@ package org.bkramzi.tetris.tetrismvc.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -21,6 +23,7 @@ public class BoardView extends JComponent implements ChangeListener{
     Board board;
     private static final int BLOCK_WIDTH=19;
     private static final int BLOCK_HEIGHT=19;
+    private static Color bg_color = Color.white;
     private static Color[] colors= {new Color(255,0,0), // red
                                     new Color(255,255,0), //green
                                     new Color(0,0,255), //blue
@@ -30,26 +33,49 @@ public class BoardView extends JComponent implements ChangeListener{
                                     new Color(255,0,255), //magenta
                                     new Color(255,128,0), //orange
                                     };
-    
-    public BoardView(Board board) {
-        this.board = board;
-        if(board!=null)
-            board.addChangeListener(this);
+
+    public BoardView() {
+        super();
     }
 
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(BLOCK_WIDTH*Board.getXBlocks(),BLOCK_HEIGHT*Board.getYBlocks());
     }
+
+    public Board getBoard() {
+        return board;
+    }
     
+    public void setBoard(Board board) {
+        this.board = board;
+        if(board!=null){
+            board.addChangeListener(this);
+        }
+    }
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); //To change body of generated methods, choose Tools | Templates.
         if(board!=null){
             int[][] grid = board.getGrid();
             int x1,y1,x2,y2;
+            if(board.isGameover()){
+                // Clear canvas
+                g.setColor(bg_color);
+                x1 = y1 = 0;
+                x2 = BLOCK_WIDTH * grid[0].length;
+                y2 = BLOCK_HEIGHT * grid.length;
+                int width = BLOCK_WIDTH * grid[0].length;
+                int height = BLOCK_HEIGHT * grid.length;
+                g.setColor(Color.black);
+                g.fillRect(x1, y1, width, height);
+                g.setColor(Color.white);
+                g.setFont(new Font(Font.MONOSPACED,Font.BOLD, 34));
+                g.drawString("GAME OVER", 20,height/2);
+                return;
+            }
             // Clear canvas
-            g.setColor(Color.WHITE);
+            g.setColor(bg_color);
             x1=y1=0;
             x2=BLOCK_WIDTH*grid[0].length;
             y2=BLOCK_HEIGHT*grid.length;
@@ -77,7 +103,6 @@ public class BoardView extends JComponent implements ChangeListener{
                     int x=(BLOCK_WIDTH*i);
                     int y=(BLOCK_HEIGHT*j);
                     g.fillRect(x, y, BLOCK_WIDTH, BLOCK_HEIGHT);
-                    //g.drawString(board.getValue(i,j), x, y);
                 }
             }
         }

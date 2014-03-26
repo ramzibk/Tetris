@@ -4,17 +4,39 @@
  */
 package org.bkramzi.tetris.tetrismvc.view;
 
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import org.bkramzi.tetris.tetrismvc.controller.BoardController;
+import org.bkramzi.tetris.tetrismvc.model.Board;
+
 /**
  *
  * @author ramzi
  */
-public class GamePanel extends javax.swing.JPanel {
+public class GamePanel extends javax.swing.JPanel{
 
     /**
      * Creates new form GamePanel
      */
     public GamePanel() {
         initComponents();
+        this.addKeyListener(boardController);
+        boardView1.setBoard(board);
+        this.addComponentListener(new ComponentListener() {
+
+            public void componentResized(ComponentEvent e) {
+            }
+
+            public void componentMoved(ComponentEvent e) {
+            }
+
+            public void componentShown(ComponentEvent e) {
+                GamePanel.this.requestFocusInWindow();
+            }
+
+            public void componentHidden(ComponentEvent e) {
+            }
+        });
     }
 
     /**
@@ -25,7 +47,27 @@ public class GamePanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+
+        boardView1 = new org.bkramzi.tetris.tetrismvc.view.BoardView();
+
+        add(boardView1);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private org.bkramzi.tetris.tetrismvc.view.BoardView boardView1;
     // End of variables declaration//GEN-END:variables
+
+    Board board = new Board();
+    BoardController boardController = new BoardController(board, boardView1);
+    
+    public void newGame(){
+     boardController.startNew();
+    }
+    
+    public void pause(){
+        boardController.pause();
+    }
+    
+    public void resume(){
+        boardController.resume();
+    }
 }
