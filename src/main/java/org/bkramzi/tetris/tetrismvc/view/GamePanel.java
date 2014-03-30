@@ -6,6 +6,8 @@ package org.bkramzi.tetris.tetrismvc.view;
 
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.bkramzi.tetris.tetrismvc.controller.BoardController;
 import org.bkramzi.tetris.tetrismvc.model.Board;
 
@@ -37,6 +39,12 @@ public class GamePanel extends javax.swing.JPanel{
             public void componentHidden(ComponentEvent e) {
             }
         });
+        board.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                scoreLabel.setText(String.valueOf(board.getScore()));
+                levelLabel.setText(String.valueOf(board.getLevel()));
+            }
+        });
     }
 
     /**
@@ -47,13 +55,62 @@ public class GamePanel extends javax.swing.JPanel{
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         boardView1 = new org.bkramzi.tetris.tetrismvc.view.BoardView();
+        panel1 = new java.awt.Panel();
+        label1 = new java.awt.Label();
+        scoreLabel = new java.awt.Label();
+        label2 = new java.awt.Label();
+        levelLabel = new java.awt.Label();
 
+        setPreferredSize(new java.awt.Dimension(350, 466));
+
+        boardView1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         add(boardView1);
+
+        panel1.setPreferredSize(new java.awt.Dimension(100, 100));
+        panel1.setLayout(new java.awt.GridBagLayout());
+
+        label1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        label1.setText("Score");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        panel1.add(label1, gridBagConstraints);
+
+        scoreLabel.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        panel1.add(scoreLabel, gridBagConstraints);
+
+        label2.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        label2.setText("Level");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        panel1.add(label2, gridBagConstraints);
+
+        levelLabel.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        panel1.add(levelLabel, gridBagConstraints);
+
+        add(panel1);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.bkramzi.tetris.tetrismvc.view.BoardView boardView1;
+    private java.awt.Label label1;
+    private java.awt.Label label2;
+    private java.awt.Label levelLabel;
+    private java.awt.Panel panel1;
+    private java.awt.Label scoreLabel;
     // End of variables declaration//GEN-END:variables
 
     Board board = new Board();

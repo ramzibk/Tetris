@@ -20,6 +20,8 @@ import javax.swing.SwingUtilities;
  */
 public class TetrisFrame extends JFrame{
     
+    private boolean pause = true;
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -28,7 +30,6 @@ public class TetrisFrame extends JFrame{
             }
         });
     }
-    
     public void intializeComponents(){
         menubar.add(m_game);
         m_game.add(mi_new);
@@ -36,19 +37,21 @@ public class TetrisFrame extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 ((GamePanel)gamePanel).newGame();
                 showCard("game");
+                mi_pause.setEnabled(true);
             }
         });
         m_game.add(mi_pause);
+        mi_pause.setEnabled(false);
         mi_pause.addActionListener(new ActionListener() {
-            boolean pause = false;
             public void actionPerformed(ActionEvent e) {
                 if(!pause){
-                    pause=true;
                     ((GamePanel)gamePanel).pause();
+                    pause=true;
                     mi_pause.setLabel("Resume");
                 }else {
-                    pause=false;
+                    showCard("game");
                     ((GamePanel)gamePanel).resume();
+                    pause=false;
                     mi_pause.setLabel("Pause");
                 }
             }
@@ -77,16 +80,18 @@ public class TetrisFrame extends JFrame{
         pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
-    
     private void showCard(String card){
         CardLayout layout = (CardLayout)getContentPane().getLayout();
         layout.show(getContentPane(), card);
         if("game".equals(card)){
-            mi_pause.setEnabled(true);
+            mi_pause.setLabel("Pause");
             gamePanel.setFocusable(true);
+            pause = false;
         }else{
             ((GamePanel)gamePanel).pause();
-            mi_pause.setEnabled(false);
+            mi_pause.setLabel("Resume");
+            gamePanel.setFocusable(true);
+            pause = true;
         }
     }
 
@@ -97,7 +102,20 @@ public class TetrisFrame extends JFrame{
     MenuItem mi_settings = new MenuItem("Settings");
     Menu m_help = new Menu("Help");
     MenuItem mi_about = new MenuItem("about");
-    
+    ActionListener game_pause_listener = new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            ((GamePanel)gamePanel).pause();
+            mi_pause.setLabel("Resume");
+            pause = true;
+        }
+    };
+    ActionListener game_resume_listener = new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            ((GamePanel)gamePanel).resume();
+            mi_pause.setLabel("Pause");
+            pause = false;
+        }
+    };    
     JPanel gamePanel = new GamePanel();
     JPanel settingsPanel = new SettingsPanel();
     JPanel aboutPanel = new HelpPanel();

@@ -8,7 +8,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -23,7 +27,8 @@ public class BoardView extends JComponent implements ChangeListener{
     Board board;
     private static final int BLOCK_WIDTH=19;
     private static final int BLOCK_HEIGHT=19;
-    private static Color bg_color = Color.white;
+    private static Color BG_COLOR = Color.white;
+    private static Color GRID_COLOR= new Color(50, 50, 50);
     private static Color[] colors= {new Color(255,0,0), // red
                                     new Color(255,255,0), //green
                                     new Color(0,0,255), //blue
@@ -33,20 +38,26 @@ public class BoardView extends JComponent implements ChangeListener{
                                     new Color(255,0,255), //magenta
                                     new Color(255,128,0), //orange
                                     };
-
+    Image img;
+    
     public BoardView() {
         super();
+        init();
     }
-
+    public void init(){
+        try {       
+            img = ImageIO.read(this.getClass().getResource("/spacebg.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(BoardView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(BLOCK_WIDTH*Board.getXBlocks(),BLOCK_HEIGHT*Board.getYBlocks());
     }
-
     public Board getBoard() {
         return board;
     }
-    
     public void setBoard(Board board) {
         this.board = board;
         if(board!=null){
@@ -59,31 +70,24 @@ public class BoardView extends JComponent implements ChangeListener{
         if(board!=null){
             int[][] grid = board.getGrid();
             int x1,y1,x2,y2;
+            // Clear canvas
+            g.setColor(BG_COLOR);
+            x1 = y1 = 0;
+            x2 = BLOCK_WIDTH * grid[0].length;
+            y2 = BLOCK_HEIGHT * grid.length;
+            int width = BLOCK_WIDTH * grid[0].length;
+            int height = BLOCK_HEIGHT * grid.length;
+            g.fillRect(x1, y1, width, height);
+            g.drawImage(img, 0, 0, this);
+            // Draw GAME OVER
             if(board.isGameover()){
-                // Clear canvas
-                g.setColor(bg_color);
-                x1 = y1 = 0;
-                x2 = BLOCK_WIDTH * grid[0].length;
-                y2 = BLOCK_HEIGHT * grid.length;
-                int width = BLOCK_WIDTH * grid[0].length;
-                int height = BLOCK_HEIGHT * grid.length;
-                g.setColor(Color.black);
-                g.fillRect(x1, y1, width, height);
                 g.setColor(Color.white);
                 g.setFont(new Font(Font.MONOSPACED,Font.BOLD, 34));
                 g.drawString("GAME OVER", 20,height/2);
                 return;
             }
-            // Clear canvas
-            g.setColor(bg_color);
-            x1=y1=0;
-            x2=BLOCK_WIDTH*grid[0].length;
-            y2=BLOCK_HEIGHT*grid.length;
-            int width = BLOCK_WIDTH*grid[0].length;
-            int height = BLOCK_HEIGHT*grid.length;
-            g.fillRect(x1, y1, width, height);
+            g.setColor(GRID_COLOR);
             // Drow grid horizontal lines
-            g.setColor(Color.black);
             for(int j=0;j<grid.length;j++){
                 x1=0;y1=BLOCK_HEIGHT*j;
                 x2=BLOCK_WIDTH*grid[0].length;y2=y1;
@@ -107,7 +111,6 @@ public class BoardView extends JComponent implements ChangeListener{
             }
         }
     }
-
     public void stateChanged(ChangeEvent e) {
         repaint();
     }
