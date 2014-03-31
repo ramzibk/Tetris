@@ -86,19 +86,7 @@ public class BoardView extends JComponent implements ChangeListener{
                 g.drawString("GAME OVER", 20,height/2);
                 return;
             }
-            g.setColor(GRID_COLOR);
-            // Drow grid horizontal lines
-            for(int j=0;j<grid.length;j++){
-                x1=0;y1=BLOCK_HEIGHT*j;
-                x2=BLOCK_WIDTH*grid[0].length;y2=y1;
-                g.drawLine(x1,y1,x2,y2);
-            }
-            // Drow grid vertical lines
-            for(int i=0;i<grid[0].length;i++){
-                x1=BLOCK_WIDTH*i;y1=0;
-                x2=x1;y2=BLOCK_HEIGHT*grid.length;
-                g.drawLine(x1,y1,x2,y2);
-            }
+            
             // Fill Mino color
             for(int j=0;j<grid.length;j++){
                 for(int i=0;i<grid[0].length;i++){

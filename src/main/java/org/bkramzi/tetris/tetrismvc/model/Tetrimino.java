@@ -38,6 +38,10 @@ public abstract class Tetrimino extends AbstractModel implements Cloneable{
     public void setShape(int[][] shape,int rotation){
         this.shape[rotation]=shape;
     }
+
+    public int[][][] getShape() {
+        return shape;
+    }
     
     public void setRotation(int turn){
         this.rotation = (this.rotation+turn)%shape.length;

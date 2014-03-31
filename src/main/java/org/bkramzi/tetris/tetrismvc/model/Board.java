@@ -6,6 +6,7 @@ package org.bkramzi.tetris.tetrismvc.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,7 @@ public class Board extends AbstractModel implements Cloneable{
     private int level;
     private List fullLines = new ArrayList<Integer>();
     private boolean gameover = false;
+    private List<Tetrimino> buffer = new LinkedList<Tetrimino>();
     
     private Tetrimino current;
     private TetriminoFactory factory;
@@ -61,7 +63,7 @@ public class Board extends AbstractModel implements Cloneable{
             }
         }
         factory= new TetriminoFactory();
-        setCurrent(factory.getTetrimino());
+        current = getNext();
     }
     public synchronized boolean left(){
         if(current==null) throw new NullPointerException("Current tetrimino is null");
@@ -159,14 +161,15 @@ public class Board extends AbstractModel implements Cloneable{
     public void setGrid(int[][] grid) {
         this.grid = grid;
     }
-        synchronized public void next() {
+    
+    synchronized public void next() {
         if(current!=null && !down()){
             getFullLines();
             updateScore(clearFullLines());
             if(current.getYpos()<BUFFER_SIZE){
                 endGame();
             }else{
-                current = factory.getTetrimino();
+                current = getNext();
             }
         }
         fireChange();
@@ -245,12 +248,10 @@ public class Board extends AbstractModel implements Cloneable{
         while (down()){}
         fireChange();
     }
-    public Tetrimino getCurrent() {return current;}
-    public void setCurrent(Tetrimino current) {
-        this.current = current;
-        if(current!=null)
-            current.setBoard(this);
+    public Tetrimino getCurrent() {
+        return current;
     }
+
     public int[][] getGrid() {
         return grid;
     }
@@ -289,4 +290,14 @@ public class Board extends AbstractModel implements Cloneable{
     public void setLevel(int level) {this.level = level;}
     public static int getXBlocks() {return XBlocks;}
     public static int getYBlocks() {return YBlocks+BUFFER_SIZE;}
+
+    public Tetrimino getNext() {
+        while(buffer.size()<2)
+            buffer.add(factory.getTetrimino());
+        return buffer.remove(0);
+    }
+
+    public List getBuffer() {
+        return buffer;
+    }
 }

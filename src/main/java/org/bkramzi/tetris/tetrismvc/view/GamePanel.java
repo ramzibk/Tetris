@@ -45,6 +45,8 @@ public class GamePanel extends javax.swing.JPanel{
                 levelLabel.setText(String.valueOf(board.getLevel()));
             }
         });
+        board.addChangeListener(tetriminoPeview);
+        tetriminoPeview.setBoard(board);
     }
 
     /**
@@ -59,6 +61,7 @@ public class GamePanel extends javax.swing.JPanel{
 
         boardView1 = new org.bkramzi.tetris.tetrismvc.view.BoardView();
         panel1 = new java.awt.Panel();
+        tetriminoPeview = new org.bkramzi.tetris.tetrismvc.view.TetriminoPeview();
         label1 = new java.awt.Label();
         scoreLabel = new java.awt.Label();
         label2 = new java.awt.Label();
@@ -67,23 +70,28 @@ public class GamePanel extends javax.swing.JPanel{
         setPreferredSize(new java.awt.Dimension(350, 466));
 
         boardView1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        add(boardView1);
 
         panel1.setPreferredSize(new java.awt.Dimension(100, 100));
         panel1.setLayout(new java.awt.GridBagLayout());
+
+        tetriminoPeview.setPreferredSize(new java.awt.Dimension(100, 100));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        panel1.add(tetriminoPeview, gridBagConstraints);
 
         label1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         label1.setText("Score");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         panel1.add(label1, gridBagConstraints);
 
         scoreLabel.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         panel1.add(scoreLabel, gridBagConstraints);
 
@@ -91,18 +99,40 @@ public class GamePanel extends javax.swing.JPanel{
         label2.setText("Level");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         panel1.add(label2, gridBagConstraints);
 
         levelLabel.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         panel1.add(levelLabel, gridBagConstraints);
 
-        add(panel1);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(boardView1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(5, 5, 5)
+                        .addComponent(boardView1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(19, 19, 19))
+        );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.bkramzi.tetris.tetrismvc.view.BoardView boardView1;
@@ -111,6 +141,7 @@ public class GamePanel extends javax.swing.JPanel{
     private java.awt.Label levelLabel;
     private java.awt.Panel panel1;
     private java.awt.Label scoreLabel;
+    private org.bkramzi.tetris.tetrismvc.view.TetriminoPeview tetriminoPeview;
     // End of variables declaration//GEN-END:variables
 
     Board board = new Board();
