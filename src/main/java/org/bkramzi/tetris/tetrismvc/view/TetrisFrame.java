@@ -20,6 +20,10 @@ import javax.swing.SwingUtilities;
  */
 public class TetrisFrame extends JFrame{
     
+    private static final String GAME="game";
+    private static final String HOWTO="howto";
+    private static final String ABOUT="about";
+    
     private boolean pause = true;
     
     public static void main(String[] args) {
@@ -56,34 +60,35 @@ public class TetrisFrame extends JFrame{
                 }
             }
         });
-        mi_settings.addActionListener(new ActionListener(){
+        mi_howto.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                showCard("settings");
+                showCard(HOWTO);
             }
         });
-        m_help.add(mi_settings);
+        m_help.add(mi_howto);
         m_help.add(mi_about);
         mi_about.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                showCard("about");
+                showCard(ABOUT);
             }
         });
         menubar.add(m_help);
         this.setMenuBar(menubar);
         getContentPane().setLayout(new CardLayout());
-        getContentPane().add(gamePanel,"game");
-        getContentPane().add(settingsPanel,"settings");
-        getContentPane().add(aboutPanel,"about");
+        getContentPane().add(gamePanel,GAME);
+        getContentPane().add(controlsPanel,HOWTO);
+        getContentPane().add(aboutPanel,ABOUT);
         gamePanel.setFocusable(true);
-        showCard("game");
+        showCard(GAME);
         setVisible(true);
+        setResizable(false);
         pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
     private void showCard(String card){
         CardLayout layout = (CardLayout)getContentPane().getLayout();
         layout.show(getContentPane(), card);
-        if("game".equals(card)){
+        if(GAME.equals(card)){
             mi_pause.setLabel("Pause");
             gamePanel.setFocusable(true);
             pause = false;
@@ -99,9 +104,9 @@ public class TetrisFrame extends JFrame{
     Menu m_game = new Menu("Game");
     MenuItem mi_pause = new MenuItem("Pause");
     MenuItem mi_new = new MenuItem("New");
-    MenuItem mi_settings = new MenuItem("Settings");
+    MenuItem mi_howto = new MenuItem("How TO");
     Menu m_help = new Menu("Help");
-    MenuItem mi_about = new MenuItem("about");
+    MenuItem mi_about = new MenuItem("About");
     ActionListener game_pause_listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             ((GamePanel)gamePanel).pause();
@@ -117,6 +122,6 @@ public class TetrisFrame extends JFrame{
         }
     };    
     JPanel gamePanel = new GamePanel();
-    JPanel settingsPanel = new SettingsPanel();
+    JPanel controlsPanel = new ControlsPanel();
     JPanel aboutPanel = new HelpPanel();
 }

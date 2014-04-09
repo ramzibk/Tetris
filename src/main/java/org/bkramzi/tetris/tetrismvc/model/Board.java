@@ -23,12 +23,14 @@ public class Board extends AbstractModel implements Cloneable{
     private int[][] grid;
     private int score;
     private int level;
+    private int levelLines;
     private List fullLines = new ArrayList<Integer>();
     private boolean gameover = false;
     private List<Tetrimino> buffer = new LinkedList<Tetrimino>();
     
     private Tetrimino current;
     private TetriminoFactory factory;
+    
     private static Logger logger = Logger.getLogger(Board.class.getName());
     
     public Board(){
@@ -57,6 +59,7 @@ public class Board extends AbstractModel implements Cloneable{
         score=0;
         level=0;
         fullLines.clear();
+        grid = new int[YBlocks+BUFFER_SIZE][XBlocks];
         for(int j=0;j<grid.length;j++){
             for(int i=0;i<grid[0].length;i++){
                 grid[j][i]=0;            
@@ -160,14 +163,16 @@ public class Board extends AbstractModel implements Cloneable{
     }
     public void setGrid(int[][] grid) {
         this.grid = grid;
-    }
-    
-    synchronized public void next() {
+    }    
+    synchronized public void next() throws GameOverException {
         if(current!=null && !down()){
-            getFullLines();
-            updateScore(clearFullLines());
+            List fullLines = getFullLines();
+            int deleted = clearFullLines();
+            setLevelLines(getLevelLines() + deleted);
+            updateScore(deleted);
             if(current.getYpos()<BUFFER_SIZE){
-                endGame();
+                gameover=true;
+                throw new GameOverException("Tetrimino blocked the top of grid");
             }else{
                 current = getNext();
             }
@@ -248,13 +253,8 @@ public class Board extends AbstractModel implements Cloneable{
         while (down()){}
         fireChange();
     }
-    public Tetrimino getCurrent() {
-        return current;
-    }
-
-    public int[][] getGrid() {
-        return grid;
-    }
+    public Tetrimino getCurrent() {        return current;}
+    public int[][] getGrid() {return grid;}
     public int clear(int x, int y) {
         int last = grid[y][x];
         grid[y][x]=0;
@@ -280,24 +280,36 @@ public class Board extends AbstractModel implements Cloneable{
         gameover = true;
     }
     private void updateScore(int deleted) {
-        this.score += deleted*(20+(20*deleted));
-        setLevel((int)(score%3000));
+        switch(deleted){
+            case 1: setScore(getScore()+10);break;
+            case 2: setScore(getScore()+30);break;
+            case 3: setScore(getScore()+60);break;
+            case 4: setScore(getScore()+100);break;
+        }
     }
-    public boolean isGameover() {return gameover;}
-    public int getScore() {return score;}
-    public int getLevel() {return level;}
-    public void setScore(int score) {this.score = score;}
-    public void setLevel(int level) {this.level = level;}
-    public static int getXBlocks() {return XBlocks;}
-    public static int getYBlocks() {return YBlocks+BUFFER_SIZE;}
-
     public Tetrimino getNext() {
         while(buffer.size()<2)
             buffer.add(factory.getTetrimino());
         return buffer.remove(0);
     }
-
-    public List getBuffer() {
-        return buffer;
+    public int getScore() {return score;}
+    public void setScore(int score) {this.score = score;fireChange();}
+    public int incrementLevel(){return ++level;}
+    public int getLevel() {return level;}
+    public void setLevel(int level) {this.level = level;fireChange();}
+    public static int getXBlocks() {return XBlocks;}
+    public static int getYBlocks() {return YBlocks+BUFFER_SIZE;}
+    public static void setXBlocks(int XBlocks) {Board.XBlocks = XBlocks;}
+    public static void setYBlocks(int YBlocks) {Board.YBlocks = YBlocks;}
+    public List getBuffer() {return buffer;}
+    public boolean isGameover() {return gameover;}
+    public int getLevelLines() {return levelLines;}
+    public void setLevelLines(int levelLines) {
+        this.levelLines = levelLines;
+        if(levelLines>=10){
+            incrementLevel();
+            setLevelLines(0);
+        }
     }
+    
 }

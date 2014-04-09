@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bkramzi.tetris.tetrismvc.model.Board;
+import org.bkramzi.tetris.tetrismvc.model.GameOverException;
 import org.bkramzi.tetris.tetrismvc.view.BoardView;
 
 public class BoardController implements KeyListener,Runnable{
@@ -15,18 +16,26 @@ public class BoardController implements KeyListener,Runnable{
     private boolean down = false;
     private boolean rotate = false;
     private boolean hardrop = false;
-
-    private Thread t;
+    
+    private Thread tread;
     private Timer timer;
     private Board board;
     private BoardView boardView;
-    private int[] keys={KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT,KeyEvent.VK_DOWN, KeyEvent.VK_UP,KeyEvent.VK_SPACE};
+    private int[] keys={KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT,KeyEvent.VK_DOWN, KeyEvent.VK_UP,KeyEvent.VK_ENTER};
+    
+    public int[] getKeys() {
+        return keys;
+    }
+
+    public void setKeys(int[] keys) {
+        this.keys = keys;
+    }
 	
     public BoardController(Board board, BoardView boardView){
         this.board = board;
         this.boardView = boardView;
-	t = new Thread (this);
-        t.start();
+	tread = new Thread (this);
+        tread.start();
         timer = new Timer(board);
         timer.start();
     }
@@ -37,7 +46,7 @@ public class BoardController implements KeyListener,Runnable{
     	while(true){
             if(active)
             handleKeyBord();
-                try{
+            try{
                 Thread.sleep(100);
             }catch(InterruptedException ie) {
                 ie.printStackTrace();
@@ -47,6 +56,7 @@ public class BoardController implements KeyListener,Runnable{
     
     public void startNew() {
         board.initBoard();
+        timer.init();
         resume();
     }
     
@@ -71,7 +81,11 @@ public class BoardController implements KeyListener,Runnable{
                     board.left();
                 }else if(down == true){
                     if(!board.down()) 
+                        try {
                         board.next();
+                    } catch (GameOverException ex) {
+                        Logger.getLogger(BoardController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 		}if(hardrop  == true){
                     board.hardDrop();
                 }
@@ -109,4 +123,5 @@ public class BoardController implements KeyListener,Runnable{
     public void keyTyped(KeyEvent e) {
 	// TODO Auto-generated method stub	
     }
+    
 }

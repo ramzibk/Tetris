@@ -35,6 +35,7 @@ public class TetriminoPeview extends JComponent implements ChangeListener{
         if(board==null) {
         } else {
             this.board = board;
+            board.addChangeListener(this);
         }
     }
     @Override

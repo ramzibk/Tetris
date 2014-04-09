@@ -26,8 +26,11 @@ public class HelpPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton8 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+
+        jButton8.setText("jButton8");
 
         setPreferredSize(new java.awt.Dimension(0, 0));
         setLayout(new java.awt.BorderLayout());
@@ -38,13 +41,15 @@ public class HelpPanel extends javax.swing.JPanel {
         jLabel1.setPreferredSize(new java.awt.Dimension(27, 44));
         add(jLabel1, java.awt.BorderLayout.PAGE_START);
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("<html><pre>This is a Java version of Tetris<br>Developped by Ramzi KHEDHIRI</pre></html>");
-        jLabel2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        add(jLabel2, java.awt.BorderLayout.CENTER);
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("<html><pre>This is a Java version of Tetris.</pre><pre>Developped by Ramzi Khedhiri</pre></html>");
+        jLabel3.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        add(jLabel3, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     // End of variables declaration//GEN-END:variables
 }

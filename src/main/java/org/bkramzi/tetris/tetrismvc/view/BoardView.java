@@ -18,6 +18,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.bkramzi.tetris.tetrismvc.model.Board;
 
+
 /**
  *
  * @author ramzi
@@ -44,6 +45,7 @@ public class BoardView extends JComponent implements ChangeListener{
         super();
         init();
     }
+    
     public void init(){
         try {       
             img = ImageIO.read(this.getClass().getResource("/spacebg.png"));
@@ -86,7 +88,6 @@ public class BoardView extends JComponent implements ChangeListener{
                 g.drawString("GAME OVER", 20,height/2);
                 return;
             }
-            
             // Fill Mino color
             for(int j=0;j<grid.length;j++){
                 for(int i=0;i<grid[0].length;i++){
@@ -99,6 +100,15 @@ public class BoardView extends JComponent implements ChangeListener{
             }
         }
     }
+    public void drawGameOver(){
+        Graphics g = getGraphics();
+        int width = BLOCK_WIDTH * board.getGrid()[0].length;
+        int height = BLOCK_HEIGHT * board.getGrid().length;
+        g.setColor(Color.white);
+        g.setFont(new Font(Font.MONOSPACED, Font.BOLD, 34));
+        g.drawString("GAME OVER", 20, height/2);
+    }
+    public void drawPause(){}
     public void stateChanged(ChangeEvent e) {
         repaint();
     }

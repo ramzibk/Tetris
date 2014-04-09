@@ -45,7 +45,6 @@ public class GamePanel extends javax.swing.JPanel{
                 levelLabel.setText(String.valueOf(board.getLevel()));
             }
         });
-        board.addChangeListener(tetriminoPeview);
         tetriminoPeview.setBoard(board);
     }
 
@@ -74,7 +73,7 @@ public class GamePanel extends javax.swing.JPanel{
         panel1.setPreferredSize(new java.awt.Dimension(100, 100));
         panel1.setLayout(new java.awt.GridBagLayout());
 
-        tetriminoPeview.setPreferredSize(new java.awt.Dimension(100, 100));
+        tetriminoPeview.setPreferredSize(new java.awt.Dimension(90, 90));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
