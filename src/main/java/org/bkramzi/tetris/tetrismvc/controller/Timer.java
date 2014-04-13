@@ -73,34 +73,40 @@ public class Timer extends Thread implements ChangeListener{
 
     public void stateChanged(ChangeEvent e) {
         switch (board.getLevel()) {
-            case 2:
+            case 0:
+                speed = 1000;
+                break;
+            case 1:
                 speed = 900;
                 break;
-            case 3:
+            case 2:
                 speed = 800;
                 break;
-            case 4:
+            case 3:
                 speed = 700;
                 break;
-            case 5:
+            case 4:
                 speed = 600;
                 break;
-            case 6:
+            case 5:
                 speed = 550;
                 break;
-            case 7:
+            case 6:
                 speed = 500;
                 break;
-            case 8:
+            case 7:
                 speed = 450;
                 break;
-            case 9:
-                speed = 400;
+            case 8:
+                speed = 300;
                 break;
-            case 10:
+            case 9:
                 speed = 350;
                 break;
-            default: speed = 1000;
+            case 10:
+                speed = 300;
+                break;
+            default: speed = 300;
                 break;
         }
     }

@@ -56,8 +56,6 @@ public class Board extends AbstractModel implements Cloneable{
     }
     public void initBoard(){
         gameover=false;
-        score=0;
-        level=0;
         fullLines.clear();
         grid = new int[YBlocks+BUFFER_SIZE][XBlocks];
         for(int j=0;j<grid.length;j++){
@@ -65,6 +63,8 @@ public class Board extends AbstractModel implements Cloneable{
                 grid[j][i]=0;            
             }
         }
+        setScore(0);
+        setLevel(0);
         factory= new TetriminoFactory();
         current = getNext();
     }
