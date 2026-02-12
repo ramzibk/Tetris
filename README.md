@@ -1,6 +1,6 @@
-# 🎮 Tetris (Java)
+# 🎮 Tetris
 
-**Tetris** (Java) is a classic game I implemented in **Java** during my second year of a Bachelor's in Computer Science as an **Erasmus student at the University of Liège, Belgium**.
+I implemented **Tetris** in **Java** during my second year of a Bachelor's in Computer Science as an **Erasmus student at the University of Liège, Belgium**.
 This project demonstrates **object-oriented design, game loop implementation, collision detection, and basic graphics animation** using Java Swing.
 It was built as **a hands-on learning exercise** to deepen my understanding of object-oriented programming, game mechanics, event-driven programming, and UI rendering in Java, and to strengthen my problem-solving and software development skills.
 
